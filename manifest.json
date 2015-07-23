@@ -1,0 +1,15 @@
+{
+"update_url": "https://clients2.google.com/service/update2/crx",
+
+  "manifest_version": 2,
+  "name": "CSRF blocker",
+  "version": "0.1",
+  "description": "Prevent cookies from being sent cross-domain.",
+  "icons": {
+      "128": "iconjaevel.png"
+   },
+  "permissions": [ "webRequest", "webRequestBlocking", "tabs", "<all_urls>"],
+  "background": {
+    "scripts": ["background.js"]
+  }
+}
