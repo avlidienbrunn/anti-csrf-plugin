@@ -38,9 +38,14 @@ function onBeforeSendHeaders(details){
 	try{
 		uri.href=tabs[details.tabId].url;
 	}catch(x){
-		uri.href = "http://xxx.yyy.zzz"
+		uri.href = "http://xxx.yyy.zzz";
 	}
 	from_host = uri.host;
+
+	//data uri's will get empty host
+	if(from_host == ""){
+		from_host = "xxx.yyy.zzz";
+	}
 
 	//Check if it's under the same domain (*.CURRENTDOMA.IN)
 	if(from_host !== "newtab" && /\./.test(from_host)){
