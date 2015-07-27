@@ -1,4 +1,5 @@
 var tabs = {};
+var blockedRequests = {};
 
 // Get all existing tabs
 chrome.tabs.query({}, function(results) {
@@ -58,6 +59,7 @@ function onBeforeSendHeaders(details){
 
 	if(should_block){
 		console.log("blocked " + from_host + "->" + to_host + "(" + details.type + ")");
+		blockedRequests.push(details.requestId);
 		for (var i = 0; i < details.requestHeaders.length; ++i) {
 			if (details.requestHeaders[i].name === 'Cookie') {
 				details.requestHeaders.splice(i, 1);
@@ -68,5 +70,20 @@ function onBeforeSendHeaders(details){
 
 	return {requestHeaders: details.requestHeaders};
 }
+
+function onHeadersReceived(details){
+	if(!(details.requestId in blockedRequests)){
+		return;
+	}
+	delete blockedRequests[details.requestId];
+	for (var i = 0; i < details.responseHeaders.length; ++i) {
+		if (details.responseHeaders[i].name === 'Set-Cookie') {
+			details.responseHeaders.splice(i, 1);
+			//No break here since multiple set-cookie headers are allowed in one response.
+		}
+	}
+	return {requestHeaders: details.requestHeaders};
+}
+
 var wr = chrome.webRequest;
 wr.onBeforeSendHeaders.addListener(onBeforeSendHeaders, {urls: ["https://*/*", "http://*/*"]}, ["blocking", "requestHeaders"]);
