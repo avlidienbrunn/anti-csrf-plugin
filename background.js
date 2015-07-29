@@ -59,7 +59,7 @@ function onBeforeSendHeaders(details){
 
 	if(should_block){
 		console.log("blocked " + from_host + "->" + to_host + "(" + details.type + ")");
-		blockedRequests.push(details.requestId);
+		blockedRequests[details.requestId.toString()] = 1;
 		for (var i = 0; i < details.requestHeaders.length; ++i) {
 			if (details.requestHeaders[i].name === 'Cookie') {
 				details.requestHeaders.splice(i, 1);
@@ -82,8 +82,9 @@ function onHeadersReceived(details){
 			//No break here since multiple set-cookie headers are allowed in one response.
 		}
 	}
-	return {requestHeaders: details.requestHeaders};
+	return {responseHeaders: details.responseHeaders};
 }
 
 var wr = chrome.webRequest;
 wr.onBeforeSendHeaders.addListener(onBeforeSendHeaders, {urls: ["https://*/*", "http://*/*"]}, ["blocking", "requestHeaders"]);
+wr.onHeadersReceived.addListener(onHeadersReceived, {urls: ["https://*/*", "http://*/*"]}, ["blocking", "responseHeaders"]);
