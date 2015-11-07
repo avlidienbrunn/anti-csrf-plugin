@@ -22,7 +22,7 @@ chrome.tabs.onRemoved.addListener(onRemovedListener);
 
 
 function onBeforeSendHeaders(details){
-	// The tabId will beset to -1 if the request isn't related to a tab.
+	// The tabId will be set to -1 if the request isn't related to a tab.
 	if(details.tabId == -1 || (details.type == "main_frame" && details.method == "GET")){
 		return;
 	}
@@ -78,7 +78,7 @@ function onHeadersReceived(details){
 	delete blockedRequests[details.requestId];
 	for (var i = 0; i < details.responseHeaders.length; ++i) {
 		if (details.responseHeaders[i].name === 'Set-Cookie') {
-			details.responseHeaders.name = 'Dont-Set-Cookie';
+			details.responseHeaders.splice(i, 1);
 			//No break here since multiple set-cookie headers are allowed in one response.
 		}
 	}

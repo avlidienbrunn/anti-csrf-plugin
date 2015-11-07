@@ -11,5 +11,10 @@
   "permissions": [ "webRequest", "webRequestBlocking", "tabs", "<all_urls>"],
   "background": {
     "scripts": ["background.js"]
+  },
+  "browser_action": {
+    "default_icon": "iconjaevel.png",
+    "default_popup": "test.html",
+    "default_title": "Test!"
   }
 }
