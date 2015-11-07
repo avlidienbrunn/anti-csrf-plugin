@@ -1,5 +1,6 @@
 var tabs = {};
 var blockedRequests = {};
+var blockedInfo = {};
 
 // Get all existing tabs
 chrome.tabs.query({}, function(results) {
@@ -22,6 +23,10 @@ chrome.tabs.onRemoved.addListener(onRemovedListener);
 
 
 function onBeforeSendHeaders(details){
+	//Reset popup blocked info text if user is navigating (main_frame)
+	if(details.type == "main_frame"){
+		blockedInfo[details.tabId] = "";
+	}
 	// The tabId will be set to -1 if the request isn't related to a tab.
 	if(details.tabId == -1 || (details.type == "main_frame" && details.method == "GET")){
 		return;
@@ -58,7 +63,7 @@ function onBeforeSendHeaders(details){
 	}
 
 	if(should_block){
-		console.log("blocked " + from_host + "->" + to_host + "(" + details.type + ")");
+		blockedInfo[details.tabId] += "Blocked " + from_host.replace(/xxx.yyy.zzz/g, "data:") + " -> " + to_host + "(" + details.type + ")\n";
 		blockedRequests[details.requestId.toString()] = 1;
 		for (var i = 0; i < details.requestHeaders.length; ++i) {
 			if (details.requestHeaders[i].name === 'Cookie') {
