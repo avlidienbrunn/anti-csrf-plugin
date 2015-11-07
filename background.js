@@ -65,13 +65,21 @@ function onBeforeSendHeaders(details){
 	}
 
 	if(should_block){
-		blockedInfo[details.tabId] += "Blocked: " + from_host.replace(/xxx.yyy.zzz/g, "data:") + " -> " + to_host;
-		blockedRequests[details.requestId.toString()] = 1;
+		has_cookie = false;
+
+		//Remove all cookies
 		for (var i = 0; i < details.requestHeaders.length; ++i) {
 			if (details.requestHeaders[i].name === 'Cookie') {
+				has_cookie = true;
 				details.requestHeaders.splice(i, 1);
 				break;
 			}
+		}
+
+		if(has_cookie){
+			//Only log blocked request if it actually removed a cookie
+			blockedInfo[details.tabId] += "Stripped cookies: " + from_host.replace(/xxx.yyy.zzz/g, "data:") + " -> " + to_host;
+			blockedRequests[details.requestId.toString()] = 1;
 		}
 	}
 
@@ -83,6 +91,7 @@ function onHeadersReceived(details){
 		return;
 	}
 	delete blockedRequests[details.requestId];
+	
 	for (var i = 0; i < details.responseHeaders.length; ++i) {
 		if (details.responseHeaders[i].name === 'Set-Cookie') {
 			details.responseHeaders.splice(i, 1);
