@@ -3,7 +3,7 @@
 
   "manifest_version": 2,
   "name": "CSRF blocker",
-  "version": "0.3",
+  "version": "0.31",
   "description": "Prevent cookies from being sent cross-origin.",
   "icons": {
       "128": "iconjaevel.png"
