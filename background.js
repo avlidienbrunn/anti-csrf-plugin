@@ -15,6 +15,8 @@ function onUpdatedListener(tabId, changeInfo, tab) {
 }
 function onRemovedListener(tabId) {
     delete tabs[tabId];
+    delete blockedRequests[tabId];
+    delete blockedInfo[tabId];
 }
 
 // Subscribe to tab events
