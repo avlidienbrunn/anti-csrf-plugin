@@ -3,8 +3,8 @@
 
   "manifest_version": 2,
   "name": "CSRF blocker",
-  "version": "0.2",
-  "description": "Prevent cookies from being sent cross-domain.",
+  "version": "0.3",
+  "description": "Prevent cookies from being sent cross-origin.",
   "icons": {
       "128": "iconjaevel.png"
    },
