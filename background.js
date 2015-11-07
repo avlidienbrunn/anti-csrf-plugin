@@ -78,7 +78,7 @@ function onHeadersReceived(details){
 	delete blockedRequests[details.requestId];
 	for (var i = 0; i < details.responseHeaders.length; ++i) {
 		if (details.responseHeaders[i].name === 'Set-Cookie') {
-			details.responseHeaders.splice(i, 1);
+			details.responseHeaders.name = 'Dont-Set-Cookie';
 			//No break here since multiple set-cookie headers are allowed in one response.
 		}
 	}
