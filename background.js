@@ -78,7 +78,7 @@ function onBeforeSendHeaders(details){
 
 		if(has_cookie){
 			//Only log blocked request if it actually removed a cookie
-			blockedInfo[details.tabId] += "Stripped cookies: " + from_host.replace(/xxx.yyy.zzz/g, "data:") + " -> " + to_host;
+			blockedInfo[details.tabId] += "Stripped cookies: " + from_host.replace(/xxx.yyy.zzz/g, "data:") + " -> " + to_host + "\n";
 			blockedRequests[details.requestId.toString()] = 1;
 		}
 	}
