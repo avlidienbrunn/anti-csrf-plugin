@@ -65,7 +65,7 @@ function onBeforeSendHeaders(details){
 	}
 
 	if(should_block){
-		blockedInfo[details.tabId] += "Blocked " + from_host.replace(/xxx.yyy.zzz/g, "data:") + " -> " + to_host + "(" + details.type + ")\n";
+		blockedInfo[details.tabId] += "Blocked CSRF: " + from_host.replace(/xxx.yyy.zzz/g, "data:") + " -> " + to_host;
 		blockedRequests[details.requestId.toString()] = 1;
 		for (var i = 0; i < details.requestHeaders.length; ++i) {
 			if (details.requestHeaders[i].name === 'Cookie') {
