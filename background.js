@@ -22,7 +22,7 @@ chrome.tabs.onRemoved.addListener(onRemovedListener);
 
 
 function onBeforeSendHeaders(details){
-	// Set to -1 if the request isn't related to a tab.
+	// The tabId will beset to -1 if the request isn't related to a tab.
 	if(details.tabId == -1 || (details.type == "main_frame" && details.method == "GET")){
 		return;
 	}
