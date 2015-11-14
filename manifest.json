@@ -6,14 +6,14 @@
   "version": "0.31",
   "description": "Prevent cookies from being sent cross-origin.",
   "icons": {
-      "128": "iconjaevel.png"
+      "128": "/img/icon.png"
    },
   "permissions": [ "webRequest", "webRequestBlocking", "tabs", "<all_urls>"],
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["/js/background.js"]
   },
   "browser_action": {
-    "default_icon": "iconjaevel.png",
+    "default_icon": "/img/icon.png",
     "default_popup": "popup.html"
   }
 }
