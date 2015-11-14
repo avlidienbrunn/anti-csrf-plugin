@@ -17,3 +17,9 @@ chrome.tabs.query(
     	}
     }
 );
+//Disable checkbox functionality
+checkbox = document.getElementById("disable");
+checkbox.onclick = function(){
+    chrome.extension.getBackgroundPage().disabled = checkbox.checked;
+}
+checkbox.checked = chrome.extension.getBackgroundPage().disabled;

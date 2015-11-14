@@ -1,6 +1,7 @@
 var tabs = {};
 var blockedRequests = {};
 var blockedInfo = {};
+var disabled = false;
 
 // Get all existing tabs
 chrome.tabs.query({}, function(results) {
@@ -25,6 +26,9 @@ chrome.tabs.onRemoved.addListener(onRemovedListener);
 
 
 function onBeforeSendHeaders(details){
+	if(disabled){
+		return;
+	}
 	//Reset popup blocked info text if user is navigating (main_frame)
 	if(details.type == "main_frame"){
 		blockedInfo[details.tabId] = "";
@@ -87,6 +91,9 @@ function onBeforeSendHeaders(details){
 }
 
 function onHeadersReceived(details){
+	if(disabled){
+		return;
+	}
 	if(!(details.requestId in blockedRequests)){
 		return;
 	}
