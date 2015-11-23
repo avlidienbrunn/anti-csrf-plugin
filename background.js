@@ -2,7 +2,6 @@ var tabs = {};
 var blockedRequests = {};
 var blockedInfo = {};
 var disabled = false;
-
 // Get all existing tabs
 chrome.tabs.query({}, function(results) {
     results.forEach(function(tab) {
@@ -10,10 +9,25 @@ chrome.tabs.query({}, function(results) {
     });
 });
 
+// Prints the amount of blocked requests in a box under the logo
+function updateGUICounter(tabId) {
+	chrome.browserAction.setBadgeBackgroundColor({color:[0, 0, 0, 255]});
+	numberOfBocked = (blockedInfo[tabId].match(/Stripped cookies: .* -> /g)||[]).length;
+	chrome.browserAction.setBadgeText({text: '' + numberOfBocked});
+}
+
 // Create tab event listeners
+function onActivatedListener(activeInfo) {
+    chrome.tabs.get(activeInfo.tabId, function (tab) {
+		updateGUICounter(activeInfo.tabId);
+    })
+}
+
 function onUpdatedListener(tabId, changeInfo, tab) {
     tabs[tab.id] = tab;
+	updateGUICounter(tabId);	
 }
+
 function onRemovedListener(tabId) {
     delete tabs[tabId];
     delete blockedRequests[tabId];
@@ -21,6 +35,7 @@ function onRemovedListener(tabId) {
 }
 
 // Subscribe to tab events
+chrome.tabs.onActivated.addListener(onActivatedListener);
 chrome.tabs.onUpdated.addListener(onUpdatedListener);
 chrome.tabs.onRemoved.addListener(onRemovedListener);
 
