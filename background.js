@@ -1,21 +1,24 @@
 var tabs = {};
 var blockedRequests = {};
 var blockedInfo = {};
+var tabWhitelist = {};
 var disabled = false;
 
 // Get all existing tabs
 chrome.tabs.query({}, function(results) {
     results.forEach(function(tab) {
-        tabs[tab.id] = tab;
+	    tabs[tab.id] = tab;
     });
 });
 
 // Create tab event listeners
 function onUpdatedListener(tabId, changeInfo, tab) {
-    tabs[tab.id] = tab;
+    tabs[tabId] = tab;
 }
 function onRemovedListener(tabId) {
     delete tabs[tabId];
+    if (tabId in tabWhitelist)
+	    delete tabWhitelist[tabId];
     delete blockedRequests[tabId];
     delete blockedInfo[tabId];
 }
@@ -26,46 +29,48 @@ chrome.tabs.onRemoved.addListener(onRemovedListener);
 
 
 function onBeforeSendHeaders(details){
-	if(disabled){
+
+	if (disabled || details.tabId in tabWhitelist) {
 		return;
 	}
+
 	//Reset popup blocked info text if user is navigating (main_frame)
 	if(details.type == "main_frame"){
 		blockedInfo[details.tabId] = "";
 	}
+
 	// The tabId will be set to -1 if the request isn't related to a tab.
-	if(details.tabId == -1 || (details.type == "main_frame" && details.method == "GET")){
+	// HTTP/1.1 recommends no action be performed on GET
+	if(details.tabId == -1 || (details.type == "main_frame") || (details.method == "GET")) {
 		return;
 	}
 
 	should_block = false;
 
-	//Get destination host
+	//Get destination host (including subdomain)
 	var uri = document.createElement('a');
 	uri.href = details.url;
-	to_host = uri.host;
+	to_host = uri.host.replace(/^www\./, '');
 
-	//Get origin host
 	uri = document.createElement('a');
 	try{
 		uri.href=tabs[details.tabId].url;
 	}catch(x){
 		uri.href = "http://xxx.yyy.zzz";
 	}
-	from_host = uri.host;
+
+	//Get origin host (including subdomain)
+	from_host = uri.host.replace(/^www\./, '');
 
 	//data uri's will get empty host
 	if(from_host == ""){
 		from_host = "xxx.yyy.zzz";
 	}
 
-	//Check if it's under the same domain (*.CURRENTDOMA.IN)
-	if(from_host !== "newtab" && /\./.test(from_host)){
-		//Get "example.com" from "www.ex.example.com"
-		pattern_from_host = from_host.match(/[^.]*\.[^.]*$/)[0].replace(/\./g, "\\.");
-		//Check if destination host ends with ".?example.com"
-		allow = new RegExp("(^|\\.)"+pattern_from_host+"$", "i");
-		should_block = !allow.test(to_host);
+	//Check if the request is being made to the same domain (host. we 
+	// ignore schema and port)
+	if(from_host !== "newtab") {
+		should_block = (to_host !== from_host);
 	}
 
 	if(should_block){
@@ -91,12 +96,11 @@ function onBeforeSendHeaders(details){
 }
 
 function onHeadersReceived(details){
-	if(disabled){
-		return;
-	}
+
 	if(!(details.requestId in blockedRequests)){
 		return;
 	}
+
 	delete blockedRequests[details.requestId];
 	
 	for (var i = 0; i < details.responseHeaders.length; ++i) {
@@ -105,6 +109,7 @@ function onHeadersReceived(details){
 			//No break here since multiple set-cookie headers are allowed in one response.
 		}
 	}
+
 	return {responseHeaders: details.responseHeaders};
 }
 

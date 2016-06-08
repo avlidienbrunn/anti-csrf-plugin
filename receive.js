@@ -9,14 +9,25 @@ chrome.tabs.query(
     	if(currentTabId in backgroundPage.blockedInfo && backgroundPage.blockedInfo[currentTabId] !== ""){
     		//Display which requests have been blocked
     		info.innerText = backgroundPage.blockedInfo[currentTabId];
-    		//Show unsafe reload button
-    		reload.style.display = "block";
-    		reload.onclick = function(){
-    			chrome.tabs.reload(currentTabId);
-    		}
     	}
+
+	tabcheckbox = document.getElementById("tabdisable");
+	tabcheckbox.onclick = function() {
+		if (tabcheckbox.checked) {
+			backgroundPage.tabWhitelist[currentTabId] = true;
+			backgroundPage.blockedInfo[currentTabId] = "";
+			info.innerText = "Nothing blocked.";
+		} else {
+			if (currentTabId in backgroundPage.tabWhitelist) {
+				delete backgroundPage.tabWhitelist[currentTabId];
+			}
+		}
+	}
+	tabcheckbox.checked = (currentTabId in backgroundPage.tabWhitelist);
+
     }
 );
+
 //Disable checkbox functionality
 checkbox = document.getElementById("disable");
 checkbox.onclick = function(){
