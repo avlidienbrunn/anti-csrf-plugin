@@ -73,7 +73,7 @@ function onBeforeSendHeaders(details){
 
 		//Remove all cookies
 		for (var i = 0; i < details.requestHeaders.length; ++i) {
-			if (details.requestHeaders[i].name === 'Cookie') {
+			if (details.requestHeaders[i].name.toUpperCase() === 'COOKIE') {
 				has_cookie = true;
 				details.requestHeaders.splice(i, 1);
 				break;
@@ -83,7 +83,7 @@ function onBeforeSendHeaders(details){
 		if(has_cookie){
 			//Only log blocked request if it actually removed a cookie
 			blockedInfo[details.tabId] += "Stripped cookies: " + from_host.replace(/xxx.yyy.zzz/g, "data:") + " -> " + to_host + "\n";
-			blockedRequests[details.requestId.toString()] = 1;
+			blockedRequests[details.requestId] = 1;
 		}
 	}
 
@@ -100,7 +100,7 @@ function onHeadersReceived(details){
 	delete blockedRequests[details.requestId];
 	
 	for (var i = 0; i < details.responseHeaders.length; ++i) {
-		if (details.responseHeaders[i].name === 'Set-Cookie') {
+		if (details.responseHeaders[i].name.toUpperCase() === 'SET-COOKIE') {
 			details.responseHeaders.splice(i, 1);
 			//No break here since multiple set-cookie headers are allowed in one response.
 		}
