@@ -61,7 +61,7 @@ function updateGUICounter(tabId) {
 function onActivatedListener(activeInfo) {
   chrome.tabs.get(activeInfo.tabId, function(tab) {
     updateBadgeGUI(activeInfo.tabId);
-  })
+  });
 }
 
 
