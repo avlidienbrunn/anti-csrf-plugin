@@ -14,6 +14,7 @@ chrome.tabs.query({}, function(results) {
 // Create tab event listeners
 function onUpdatedListener(tabId, changeInfo, tab) {
     tabs[tabId] = tab;
+    updateGUICounter(tabId);
 }
 
 function onRemovedListener(tabId) {
@@ -35,7 +36,23 @@ function add_blocked_info(tabId, source, dst) {
   blockedInfo[tabId].push([source, dst]);
 }
 
+function updateGUICounter(tabId) {
+  chrome.browserAction.setBadgeBackgroundColor({color:[0,0,0,255]});
+  numberOfBlocked = tabId in blockedInfo ? blockedInfo[tabId].length : 0;
+  if (numberOfBlocked == 0)
+    chrome.browserAction.setBadgeText({text: ""});
+  else
+    chrome.browserAction.setBadgeText({text: numberOfBlocked.toString()});
+}
+
+function onActivatedListener(activeInfo) {
+  chrome.tabs.get(activeInfo.tabId, function(tab) {
+    updateGUICounter(activeInfo.tabId);
+  })
+}
+
 // Subscribe to tab events
+chrome.tabs.onActivated.addListener(onActivatedListener);
 chrome.tabs.onUpdated.addListener(onUpdatedListener);
 chrome.tabs.onRemoved.addListener(onRemovedListener);
 
