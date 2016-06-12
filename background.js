@@ -36,6 +36,18 @@ function add_blocked_info(tabId, source, dst) {
   blockedInfo[tabId].push([source, dst]);
 }
 
+function updateBadgeGUI(tabId) {
+  updateGUICounter(tabId);
+  updateGUIColor(tabId);
+}
+
+function updateGUIColor(tabId) {
+  if (disabled || tabId in tabWhitelist) 
+    chrome.browserAction.setIcon({"path":"badgedis.png"});
+  else
+    chrome.browserAction.setIcon({"path":"badge.png"});
+}
+
 function updateGUICounter(tabId) {
   chrome.browserAction.setBadgeBackgroundColor({color:[0,0,0,255]});
   numberOfBlocked = tabId in blockedInfo ? blockedInfo[tabId].length : 0;
@@ -47,7 +59,7 @@ function updateGUICounter(tabId) {
 
 function onActivatedListener(activeInfo) {
   chrome.tabs.get(activeInfo.tabId, function(tab) {
-    updateGUICounter(activeInfo.tabId);
+    updateBadgeGUI(activeInfo.tabId);
   })
 }
 
