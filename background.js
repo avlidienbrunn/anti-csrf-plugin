@@ -15,12 +15,24 @@ chrome.tabs.query({}, function(results) {
 function onUpdatedListener(tabId, changeInfo, tab) {
     tabs[tabId] = tab;
 }
+
 function onRemovedListener(tabId) {
     delete tabs[tabId];
     if (tabId in tabWhitelist)
 	    delete tabWhitelist[tabId];
     delete blockedRequests[tabId];
     delete blockedInfo[tabId];
+}
+
+function rst_blocked_info(tabId) {
+  blockedInfo[tabId] = [];
+}
+
+function add_blocked_info(tabId, source, dst) {
+  if (!(tabId in blockedInfo))
+    blockedInfo[tabId] = [];
+
+  blockedInfo[tabId].push([source, dst]);
 }
 
 // Subscribe to tab events
@@ -36,7 +48,7 @@ function onBeforeSendHeaders(details){
 
 	//Reset popup blocked info text if user is navigating (main_frame)
 	if(details.type == "main_frame"){
-		blockedInfo[details.tabId] = "";
+    rst_blocked_info(details.tabId);
 	}
 
 	// The tabId will be set to -1 if the request isn't related to a tab.
@@ -87,7 +99,7 @@ function onBeforeSendHeaders(details){
 
 		if(has_cookie){
 			//Only log blocked request if it actually removed a cookie
-			blockedInfo[details.tabId] += "Stripped cookies: " + from_host.replace(/xxx.yyy.zzz/g, "data:") + " -> " + to_host + "\n";
+      add_blocked_info(details.tabId, from_host.replace(/xxx.yyy.zzz/g, "data:"), to_host);
 			blockedRequests[details.requestId] = 1;
 		}
 	}

@@ -6,16 +6,18 @@ chrome.tabs.query(
     	var currentTabId = tabArray[0].id;
     	var backgroundPage = chrome.extension.getBackgroundPage();
 
-    	if(currentTabId in backgroundPage.blockedInfo && backgroundPage.blockedInfo[currentTabId] !== ""){
-    		//Display which requests have been blocked
-    		info.innerText = backgroundPage.blockedInfo[currentTabId];
+    	if(currentTabId in backgroundPage.blockedInfo && backgroundPage.blockedInfo[currentTabId].length > 0){
+        var blockedInfo = backgroundPage.blockedInfo[currentTabId];
+        info.innerText = "Stripped cookies for:\n";
+        for (var i = 0; i < blockedInfo.length; i++) 
+          info.innerText += blockedInfo[i][0] + " -> " + blockedInfo[i][1] + "\n";
     	}
 
 	tabcheckbox = document.getElementById("tabdisable");
 	tabcheckbox.onclick = function() {
 		if (tabcheckbox.checked) {
 			backgroundPage.tabWhitelist[currentTabId] = true;
-			backgroundPage.blockedInfo[currentTabId] = "";
+			backgroundPage.blockedInfo[currentTabId] = [];
 			info.innerText = "Nothing blocked.";
 		} else {
 			if (currentTabId in backgroundPage.tabWhitelist) {
