@@ -63,10 +63,6 @@ function onActivatedListener(activeInfo) {
   })
 }
 
-// Subscribe to tab events
-chrome.tabs.onActivated.addListener(onActivatedListener);
-chrome.tabs.onUpdated.addListener(onUpdatedListener);
-chrome.tabs.onRemoved.addListener(onRemovedListener);
 
 
 function onBeforeSendHeaders(details){
@@ -75,14 +71,9 @@ function onBeforeSendHeaders(details){
 		return;
 	}
 
-	//Reset popup blocked info text if user is navigating (main_frame)
-	if(details.type == "main_frame"){
-    rst_blocked_info(details.tabId);
-	}
-
 	// The tabId will be set to -1 if the request isn't related to a tab.
 	// HTTP/1.1 recommends no action be performed on GET
-	if(details.tabId == -1 || (details.type == "main_frame") || (details.method == "GET")) {
+	if(details.tabId == -1 || (details.method == "GET")) {
 		return;
 	}
 
@@ -154,6 +145,21 @@ function onHeadersReceived(details){
 	return {responseHeaders: details.responseHeaders};
 }
 
+function onBeforeNavigate(details) {
+  if (details.frameId != 0)
+    return;
+  rst_blocked_info(details.tabId);
+  updateBadgeGUI(details.tabId);
+}
+
 var wr = chrome.webRequest;
 wr.onBeforeSendHeaders.addListener(onBeforeSendHeaders, {urls: ["https://*/*", "http://*/*"]}, ["blocking", "requestHeaders"]);
 wr.onHeadersReceived.addListener(onHeadersReceived, {urls: ["https://*/*", "http://*/*"]}, ["blocking", "responseHeaders"]);
+
+// Subscribe to tab events
+chrome.tabs.onActivated.addListener(onActivatedListener);
+chrome.tabs.onUpdated.addListener(onUpdatedListener);
+chrome.tabs.onRemoved.addListener(onRemovedListener);
+
+// Subscribe to navigation events
+chrome.webNavigation.onBeforeNavigate.addListener(onBeforeNavigate);

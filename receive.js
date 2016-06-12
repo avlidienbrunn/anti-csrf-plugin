@@ -18,8 +18,6 @@ chrome.tabs.query(
     tabcheckbox.onclick = function() {
       if (tabcheckbox.checked || document.getElementById("disable").checked) {
         backgroundPage.tabWhitelist[currentTabId] = true;
-        backgroundPage.blockedInfo[currentTabId] = [];
-        info.innerText = "Nothing blocked.";
         chrome.browserAction.setIcon({"path":"badgedis.png"});
       } else {
         if (currentTabId in backgroundPage.tabWhitelist) {

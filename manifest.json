@@ -9,7 +9,7 @@
       "128": "badgedis.png",
       "128": "badge.png"
    },
-  "permissions": [ "webRequest", "webRequestBlocking", "tabs", "<all_urls>"],
+  "permissions": [ "webRequest", "webRequestBlocking", "tabs", "webNavigation", "<all_urls>"],
   "background": {
     "scripts": ["background.js"]
   },
