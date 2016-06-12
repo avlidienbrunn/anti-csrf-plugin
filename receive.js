@@ -19,8 +19,10 @@ chrome.tabs.query(
 			backgroundPage.tabWhitelist[currentTabId] = true;
 			backgroundPage.blockedInfo[currentTabId] = [];
 			info.innerText = "Nothing blocked.";
+      chrome.browserAction.setIcon({"path":"badgedis.png"});
 		} else {
 			if (currentTabId in backgroundPage.tabWhitelist) {
+      chrome.browserAction.setIcon({"path":"badge.png"});
 				delete backgroundPage.tabWhitelist[currentTabId];
 			}
 		}
@@ -33,6 +35,13 @@ chrome.tabs.query(
 //Disable checkbox functionality
 checkbox = document.getElementById("disable");
 checkbox.onclick = function(){
-    chrome.extension.getBackgroundPage().disabled = checkbox.checked;
+  chrome.extension.getBackgroundPage().disabled = checkbox.checked;
+  if (checkbox.checked) 
+    chrome.browserAction.setIcon({"path":"badgedis.png"});
+  else
+    chrome.browserAction.setIcon({"path":"badge.png"});
+
+
 }
+
 checkbox.checked = chrome.extension.getBackgroundPage().disabled;

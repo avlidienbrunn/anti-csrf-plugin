@@ -6,6 +6,7 @@
   "version": "0.41",
   "description": "Prevent cookies from being client-side sent cross-origin.",
   "icons": {
+      "128": "badgedis.png",
       "128": "badge.png"
    },
   "permissions": [ "webRequest", "webRequestBlocking", "tabs", "<all_urls>"],
