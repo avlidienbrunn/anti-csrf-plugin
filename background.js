@@ -34,6 +34,7 @@ function add_blocked_info(tabId, source, dst) {
     blockedInfo[tabId] = [];
 
   blockedInfo[tabId].push([source, dst]);
+  updateGUICounter(tabId);
 }
 
 function updateBadgeGUI(tabId) {
