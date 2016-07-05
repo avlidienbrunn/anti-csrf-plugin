@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "No-CSRF",
-  "version": "0.41",
+  "version": "0.42",
   "description": "Prevent cookies from being client-side sent cross-origin.",
   "icons": {
       "128": "badgedis.png",
