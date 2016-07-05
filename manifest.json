@@ -1,19 +1,18 @@
 {
-"update_url": "https://clients2.google.com/service/update2/crx",
-
   "manifest_version": 2,
-  "name": "CSRF blocker",
-  "version": "0.40",
-  "description": "Prevent cookies from being sent cross-origin.",
+  "name": "No-CSRF",
+  "version": "0.42",
+  "description": "Prevent cookies from being client-side sent cross-origin.",
   "icons": {
-      "128": "iconjaevel.png"
+      "128": "badgedis.png",
+      "128": "badge.png"
    },
-  "permissions": [ "webRequest", "webRequestBlocking", "tabs", "<all_urls>"],
+  "permissions": [ "webRequest", "webRequestBlocking", "tabs", "webNavigation", "<all_urls>"],
   "background": {
     "scripts": ["background.js"]
   },
   "browser_action": {
-    "default_icon": "iconjaevel.png",
+    "default_icon": "badge.png",
     "default_popup": "popup.html"
   }
 }
